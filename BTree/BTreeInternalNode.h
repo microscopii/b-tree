@@ -9,16 +9,14 @@
 
 #include "BTreeNode.h"
 
-class BTreeInternalNode : public BTreeNode {
-
+class BTreeInternalNode : public BTreeNode
+{
 public:
     BTreeInternalNode();
     ~BTreeInternalNode();
 
 private:
-    bool isFull() override;
     int removeKey(int idx) override;
-    void split(BTreeNode* node) override;
 
 public:
     void addKey(int key) override;

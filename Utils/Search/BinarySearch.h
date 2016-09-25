@@ -7,8 +7,8 @@
 #define BTREETEST_BINARYSEARCH_H
 
 
-class BinarySearch {
-
+class BinarySearch
+{
 public:
     static int findLT(int* keys, int nKeys, int key);
     static int findGE(int* keys, int nKeys, int key);

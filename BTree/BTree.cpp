@@ -8,24 +8,24 @@
 #include "BTreeLeafNode.h"
 #include "BinarySearch.h"
 
-BTree::BTree() {
-
+BTree::BTree()
+{
     depth = -1;
     root = createRootLeafNode();
 }
 
 
 
-BTree::~BTree() {
-
+BTree::~BTree()
+{
     for (int i = 0; i <= depth; i++)
         delete nodes[i];
 }
 
 
 
-BTreeNode* BTree::createRootLeafNode() {
-
+BTreeNode* BTree::createRootLeafNode()
+{
     BTreeLeafNode* node = new BTreeLeafNode();
 
     depth++;
@@ -36,12 +36,33 @@ BTreeNode* BTree::createRootLeafNode() {
 
 
 
-BTreeNode* BTree::createRootNode() {
-
+BTreeNode* BTree::createRootNode()
+{
     BTreeInternalNode* node = new BTreeInternalNode();
 
     depth++;
     nodes[depth] = new List(node);
+
+    return node;
+}
+
+
+
+/**
+ * Find leaf node with the specified key in this b-tree
+ *
+ * @param key  key to find
+ * @return leaf node
+ */
+BTreeNode* BTree::findLeaf(int key)
+{
+    BTreeNode* node = root;
+
+    while (!node->isLeaf)
+    {
+        int idx = BinarySearch::findGT(node->keys, node->nKeys, key);
+        node = node->children[idx];
+    }
 
     return node;
 }
@@ -54,8 +75,8 @@ BTreeNode* BTree::createRootNode() {
  * @param node  1st node in subtree
  * @return leaf node
  */
-BTreeNode* BTree::findLeafWithFirstKey(BTreeNode* node) {
-
+BTreeNode* BTree::findLeafWithFirstKey(BTreeNode* node)
+{
     while (!node->isLeaf)
         node = node->children[0];
 
@@ -70,8 +91,8 @@ BTreeNode* BTree::findLeafWithFirstKey(BTreeNode* node) {
  * @param node  1st node in subtree
  * @return leaf node
  */
-BTreeNode* BTree::findLeafWithLastKey(BTreeNode* node) {
-
+BTreeNode* BTree::findLeafWithLastKey(BTreeNode* node)
+{
     while (!node->isLeaf)
         node = node->children[node->nKeys];
 
@@ -81,21 +102,33 @@ BTreeNode* BTree::findLeafWithLastKey(BTreeNode* node) {
 
 
 /**
- * Find leaf node with the specified key in this b-tree
+ * Find predecessor key in the specified subtree
  *
- * @param key  key to find
+ * @param node  1st node in subtree
  * @return leaf node
  */
-BTreeNode* BTree::findLeaf(int key) {
+int BTree::getSuccessor(BTreeNode* node)
+{
+    while (!node->isLeaf)
+        node = node->children[0];
 
-    BTreeNode* node = root;
+    return node->firstKey();
+}
 
-    while (!node->isLeaf) {
-        int idx = BinarySearch::findGT(node->keys, node->nKeys, key);
-        node = node->children[idx];
-    }
 
-    return node;
+
+/**
+ * Find successor key in the specified subtree
+ *
+ * @param node  1st node in subtree
+ * @return leaf node
+ */
+int BTree::getPredecessor(BTreeNode* node)
+{
+    while (!node->isLeaf)
+        node = node->children[node->nKeys];
+
+    return node->lastKey();
 }
 
 
@@ -105,22 +138,22 @@ BTreeNode* BTree::findLeaf(int key) {
  *
  * @param key  key to insert
  */
-void BTree::insertKey(int key) {
-
+void BTree::insertKey(int key)
+{
     BTreeNode* r = root;
 
-    if (r->isFull()) {
-
+    if (r->isFull())
+    {
         BTreeNode* s = createRootNode();
         s->children[0] = r;
 
         root = s;
 
-        s->splitChild(0);
+        BTreeNode::splitChild(s, 0);
         insertNonFull(s, key);
-
-    } else {
-
+    }
+    else
+    {
         insertNonFull(r, key);
     }
 
@@ -128,9 +161,10 @@ void BTree::insertKey(int key) {
 
 
 
-void BTree::insertNonFull(BTreeNode* node, int key) {
-
-    if (node->isLeaf) {
+void BTree::insertNonFull(BTreeNode* node, int key)
+{
+    if (node->isLeaf)
+    {
         node->addKey(key);
         return;
     }
@@ -138,9 +172,9 @@ void BTree::insertNonFull(BTreeNode* node, int key) {
 
     int idx = BinarySearch::findGT(node->keys, node->nKeys, key);
 
-    if (node->children[idx]->isFull()) {
-
-        node->splitChild(idx);
+    if (node->children[idx]->isFull())
+    {
+        BTreeNode::splitChild(node, idx);
 
         if (key > node->keys[idx])
             idx++;
@@ -152,51 +186,121 @@ void BTree::insertNonFull(BTreeNode* node, int key) {
 
 
 /**
- * Delete a key from this b-tree. Return true if successful.
+ * Delete a key from this b-tree.
  *
  * @param key  key to delete
- * @return true or false
  */
-bool BTree::deleteKey(int key) {
+void BTree::deleteKey(int key)
+{
+    deleteKey(root, key);
+}
 
-    BTreeNode* node = root;
-    int idx = 0;
 
 
-    while (!node->isLeaf) {
+void BTree::deleteKey(BTreeNode* node, int key)
+{
+    
+    int idx = BinarySearch::findGE(node->keys, node->nKeys, key);
 
-        idx = BinarySearch::findGE(node->keys, node->nKeys, key);
 
-        if (key == node->keys[idx]) {
-            break;
-        }
+    if (key == node->keys[idx])
+    {
 
-        node = node->children[idx];
+        if (node->isLeaf)
+            deleteFromLeaf(node, idx);
+        else
+            deleteFromNonLeaf(node, idx);
+
+        return;
     }
 
 
-    if (node->isLeaf) {
+    if (node->isLeaf)
+    {
+        printf("Key not found!\n");
+        return;
+    }
+    else
+    {
+        bool flag = (idx == node->nKeys);
 
-        idx = BinarySearch::findEQ(node->keys, node->nKeys, key);
+        if (node->children[idx]->nKeys < MIN_DEGREE)
+            rebalance(node, idx);
 
-        if (idx > 0) {
-            node->removeKey(idx);
-            return true;
+        if (flag && idx > node->nKeys)
+            deleteKey(node->children[idx - 1], key);
+        else
+            deleteKey(node->children[idx], key);
+    }
+
+}
+
+
+
+void BTree::deleteFromNonLeaf(BTreeNode* node, int idx)
+{
+
+    int key = node->keys[idx];
+
+
+    if (node->children[idx]->nKeys >= MIN_DEGREE)
+    {
+        int predKey = getPredecessor(node->children[idx]);
+        node->keys[idx] = predKey;
+        deleteKey(node->children[idx], predKey);
+
+    }
+    else if (node->children[idx + 1]->nKeys >= MIN_DEGREE)
+    {
+        int succKey = getSuccessor(node->children[idx + 1]);
+        node->keys[idx] = succKey;
+        deleteKey(node->children[idx + 1], succKey);
+
+    }
+    else
+    {
+        BTreeNode::mergeChildren(node, idx);
+        deleteKey(node->children[idx], key);
+    }
+
+}
+
+
+
+void BTree::deleteFromLeaf(BTreeNode* node, int idx)
+{
+    node->removeKey(idx);
+}
+
+
+
+void BTree::rebalance(BTreeNode* node, int idx)
+{
+
+    if (idx != 0)
+    {
+        if (node->children[idx - 1]->nKeys >= MIN_DEGREE)
+        {
+            BTreeNode::rotateRight(node, idx);
+            return;
         }
-        else {
-            return false;
-        }
-
     }
 
 
-    // Find the first key in the right subtree and remove
-    BTreeNode* leaf = findLeafWithFirstKey(node->children[idx + 1]);
-    leaf->removeFirstKey();
+    if (idx != node->nKeys)
+    {
+        if (node->children[idx + 1]->nKeys >= MIN_DEGREE)
+        {
+            BTreeNode::rotateLeft(node, idx);
+            return;
+        }
+    }
 
-    node->keys[idx] = leaf->firstKey();
 
-    return true;
+    if (idx != node->nKeys)
+        BTreeNode::mergeChildren(node, idx);
+    else
+        BTreeNode::mergeChildren(node, idx - 1);
 }
 
 
@@ -204,8 +308,8 @@ bool BTree::deleteKey(int key) {
 /**
  * Dump structure of this b-tree
  */
-void BTree::dump() {
-
+void BTree::dump()
+{
     printf("Depth: %d\n", depth);
 
     if (root->isLeaf)
@@ -218,10 +322,11 @@ void BTree::dump() {
 
 
 
-void BTree::dump(BTreeNode* node, int level) {
+void BTree::dump(BTreeNode* node, int level)
+{
 
-    for (int i = 0; i <= node->nKeys; i++) {
-
+    for (int i = 0; i <= node->nKeys; i++)
+    {
         BTreeNode* child = node->children[i];
 
         if (child->isLeaf)
@@ -229,27 +334,27 @@ void BTree::dump(BTreeNode* node, int level) {
         else
             dump(child, level + 1);
 
-        if (i < node->nKeys) {
+        if (i < node->nKeys)
+        {
             indent(level);
-            printf("%d\n", node->keys[i]);
+            printf("%s\n", (char*) &node->keys[i]);
         }
-
     }
 
 }
 
 
 
-void BTree::dumpLeaf(BTreeNode* node, int level) {
-
+void BTree::dumpLeaf(BTreeNode* node, int level)
+{
     indent(level);
     printf("%s\n", node->toString().c_str());
 }
 
 
 
-void BTree::indent(int n) {
-
+void BTree::indent(int n)
+{
     for (int i = 0; i < n; i++)
         printf("\t");
 }
@@ -259,11 +364,12 @@ void BTree::indent(int n) {
 /**
  * Dump leaf nodes in ascending order
  */
-void BTree::dumpLeafNodesAsc() {
-
+void BTree::dumpLeafNodesAsc()
+{
     ListNode* node = nodes[0]->first();
 
-    while (node->hasNext()) {
+    while (node->hasNext())
+    {
         BTreeNode* leaf = dynamic_cast<BTreeNode*>(node);
         printf("%s, ", leaf->toString().c_str());
 
@@ -278,11 +384,12 @@ void BTree::dumpLeafNodesAsc() {
 /**
  * Dump leaf nodes in descending order
  */
-void BTree::dumpLeafNodesDesc() {
-
+void BTree::dumpLeafNodesDesc()
+{
     ListNode* node = nodes[0]->last();
 
-    while (node->hasPrev()) {
+    while (node->hasPrev())
+    {
         BTreeNode* leaf = dynamic_cast<BTreeNode*>(node);
         printf("%s, ", leaf->toStringReversed().c_str());
 

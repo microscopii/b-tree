@@ -13,18 +13,17 @@
  * @param key    the key to search for
  * @return index of found key
  */
-int BinarySearch::findLT(int* keys, int nKeys, int key) {
-
+int BinarySearch::findLT(int* keys, int nKeys, int key)
+{
     int lo = 0;
     int hi = nKeys - 1;
 
-    if (keys[hi] < key) {
+    if (keys[hi] < key)
         return hi;
-    }
 
 
-    while (hi >= lo) {
-
+    while (hi >= lo)
+    {
         int mid = (lo + hi) >> 1;
 
         if (keys[mid] < key)
@@ -46,18 +45,17 @@ int BinarySearch::findLT(int* keys, int nKeys, int key) {
  * @param key    the key to search for
  * @return index of found key
  */
-int BinarySearch::findGE(int* keys, int nKeys, int key) {
-
+int BinarySearch::findGE(int* keys, int nKeys, int key)
+{
     int lo = 0;
     int hi = nKeys - 1;
 
-    if (keys[lo] >= key) {
+    if (keys[lo] >= key)
         return lo;
-    }
 
 
-    while (hi >= lo) {
-
+    while (hi >= lo)
+    {
         int mid = (lo + hi) >> 1;
 
         if (keys[mid] >= key)
@@ -79,18 +77,17 @@ int BinarySearch::findGE(int* keys, int nKeys, int key) {
  * @param key    the key to search for
  * @return index of found key
  */
-int BinarySearch::findGT(int* keys, int nKeys, int key) {
-
+int BinarySearch::findGT(int* keys, int nKeys, int key)
+{
     int lo = 0;
     int hi = nKeys - 1;
 
-    if (keys[lo] > key) {
+    if (keys[lo] > key)
         return lo;
-    }
 
 
-    while (hi >= lo) {
-
+    while (hi >= lo)
+    {
         int mid = (lo + hi) >> 1;
 
         if (keys[mid] > key)
@@ -112,18 +109,17 @@ int BinarySearch::findGT(int* keys, int nKeys, int key) {
  * @param key    the key to search for
  * @return index of found key
  */
-int BinarySearch::findLE(int* keys, int nKeys, int key) {
-
+int BinarySearch::findLE(int* keys, int nKeys, int key)
+{
     int lo = 0;
     int hi = nKeys - 1;
 
-    if (keys[hi] <= key) {
+    if (keys[hi] <= key)
         return hi;
-    }
 
 
-    while (hi >= lo) {
-
+    while (hi >= lo)
+    {
         int mid = (lo + hi) >> 1;
 
         if (keys[mid] <= key)
@@ -145,18 +141,17 @@ int BinarySearch::findLE(int* keys, int nKeys, int key) {
  * @param key    the key to search for
  * @return index of found key
  */
-int BinarySearch::findEQ(int* keys, int nKeys, int key) {
-
+int BinarySearch::findEQ(int* keys, int nKeys, int key)
+{
     int lo = 0;
     int hi = nKeys - 1;
 
-    if (keys[lo] > key || keys[hi] < key) {
+    if (keys[lo] > key || keys[hi] < key)
         return -1;
-    }
 
 
-    while (hi >= lo) {
-
+    while (hi >= lo)
+    {
         int mid = (lo + hi) >> 1;
 
         if (keys[mid] >= key)

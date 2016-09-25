@@ -9,8 +9,8 @@
 /**
  * Constuct an empty list
  */
-List::List() {
-
+List::List()
+{
     head = new ListNode();
     tail = new ListNode();
 
@@ -24,8 +24,8 @@ List::List() {
  *
  * @param item  ListNode to add
  */
-List::List(ListNode* item) {
-
+List::List(ListNode* item)
+{
     head = new ListNode();
     tail = new ListNode();
 
@@ -34,11 +34,12 @@ List::List(ListNode* item) {
 
 
 
-List::~List() {
-
+List::~List()
+{
     ListNode* node = head->rightSib;
 
-    while (node != tail) {
+    while (node != tail)
+    {
         delete node;
         node = node->rightSib;
     }
@@ -54,8 +55,8 @@ List::~List() {
  *
  * @return the ListNode
  */
-ListNode* List::first() {
-
+ListNode* List::first()
+{
     return head->rightSib;
 }
 
@@ -66,8 +67,8 @@ ListNode* List::first() {
  *
  * @return the ListNode
  */
-ListNode* List::last() {
-
+ListNode* List::last()
+{
     return tail->leftSib;
 }
 
@@ -78,8 +79,8 @@ ListNode* List::last() {
  *
  * @param item  the ListNode to add
  */
-void List::addFirst(ListNode* item) {
-
+void List::addFirst(ListNode* item)
+{
     ListNode::link(head, item, head->rightSib);
 }
 
@@ -90,8 +91,8 @@ void List::addFirst(ListNode* item) {
  *
  * @param item  the ListNode to add
  */
-void List::addLast(ListNode* item) {
-
+void List::addLast(ListNode* item)
+{
     ListNode::link(tail->leftSib, item, tail);
 }
 
@@ -100,8 +101,8 @@ void List::addLast(ListNode* item) {
 /**
  * Remove first item from the list
  */
-void List::removeFirst() {
-
+void List::removeFirst()
+{
     ListNode::link(head, head->rightSib->rightSib);
 }
 
@@ -110,8 +111,8 @@ void List::removeFirst() {
 /**
  * Remove last item from the list
  */
-void List::removeLast() {
-
+void List::removeLast()
+{
     ListNode::link(tail->leftSib->leftSib, tail);
 }
 
@@ -122,8 +123,8 @@ void List::removeLast() {
  *
  * @param item  the ListNode to add
  */
-void List::add(ListNode* item) {
-
+void List::add(ListNode* item)
+{
     addLast(item);
 }
 
@@ -135,8 +136,8 @@ void List::add(ListNode* item) {
  * @param item  the ListNode to remove
  * @return true or false
  */
-bool List::remove(ListNode* item) {
-
+bool List::remove(ListNode* item)
+{
     ListNode* node = head->rightSib;
 
     while (node != tail && node != item) {

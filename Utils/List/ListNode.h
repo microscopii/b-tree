@@ -7,8 +7,8 @@
 #define BTREETEST_LISTNODE_H
 
 
-class ListNode {
-
+class ListNode
+{
     friend class List;
 
 private:

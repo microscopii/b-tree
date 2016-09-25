@@ -5,8 +5,8 @@
 
 #include "ListNode.h"
 
-ListNode::ListNode() {
-
+ListNode::ListNode()
+{
     leftSib  = nullptr;
     rightSib = nullptr;
 }
@@ -23,8 +23,8 @@ ListNode::~ListNode() {}
  * @param rightNode  ListNode on rhs
  * @return ListNode on rhs
  */
-ListNode* ListNode::link(ListNode* rightNode) {
-
+ListNode* ListNode::link(ListNode* rightNode)
+{
     this->rightSib = rightNode;
     rightNode->leftSib = this;
 
@@ -39,8 +39,8 @@ ListNode* ListNode::link(ListNode* rightNode) {
  * @param firstNode   the 1st ListNode
  * @param secondNode  the 2nd ListNode
  */
-void ListNode::link(ListNode* firstNode, ListNode* secondNode) {
-
+void ListNode::link(ListNode* firstNode, ListNode* secondNode)
+{
     firstNode->rightSib = secondNode;
     secondNode->leftSib = firstNode;
 }
@@ -54,8 +54,8 @@ void ListNode::link(ListNode* firstNode, ListNode* secondNode) {
  * @param secondNode  the 2nd ListNode
  * @param thirdNode   the 3rd ListNode
  */
-void ListNode::link(ListNode* firstNode, ListNode* secondNode, ListNode* thirdNode) {
-
+void ListNode::link(ListNode* firstNode, ListNode* secondNode, ListNode* thirdNode)
+{
     firstNode->rightSib = secondNode;
     secondNode->leftSib = firstNode;
 
@@ -70,8 +70,8 @@ void ListNode::link(ListNode* firstNode, ListNode* secondNode, ListNode* thirdNo
  *
  * @return true or false
  */
-bool ListNode::hasNext() {
-
+bool ListNode::hasNext()
+{
     return (rightSib != nullptr);
 }
 
@@ -82,8 +82,8 @@ bool ListNode::hasNext() {
  *
  * @return true or false
  */
-bool ListNode::hasPrev() {
-
+bool ListNode::hasPrev()
+{
     return (leftSib != nullptr);
 }
 
@@ -94,8 +94,8 @@ bool ListNode::hasPrev() {
  *
  * @return ListNode
  */
-ListNode* ListNode::next() {
-
+ListNode* ListNode::next()
+{
     return rightSib;
 }
 
@@ -106,7 +106,7 @@ ListNode* ListNode::next() {
  *
  * @return ListNode
  */
-ListNode* ListNode::prev() {
-
+ListNode* ListNode::prev()
+{
     return leftSib;
 }

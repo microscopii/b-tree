@@ -9,8 +9,8 @@
 
 class ListNode;
 
-class List {
-
+class List
+{
 private:
     ListNode* head;
     ListNode* tail;

@@ -10,8 +10,8 @@
 #include <string>
 #include "ListNode.h"
 
-class BTreeNode : public ListNode {
-
+class BTreeNode : public ListNode
+{
 public:
     bool        isLeaf;
     int         nKeys;
@@ -22,11 +22,11 @@ public:
     BTreeNode(bool isLeaf);
     ~BTreeNode();
 
-    virtual bool isFull() = 0;
     virtual void addKey(int key) = 0;
     virtual void addKey(int key, BTreeNode* child) = 0;
     virtual int removeKey(int idx) = 0;
-    virtual void split(BTreeNode* parent) = 0;
+
+    bool isFull();
 
     int firstKey();
     int lastKey();
@@ -34,7 +34,10 @@ public:
     int removeFirstKey();
     int removeLastKey();
 
-    void splitChild(int idx);
+    static void splitChild(BTreeNode* parent, int idx);
+    static void mergeChildren(BTreeNode* parent, int idx);
+    static void rotateLeft(BTreeNode* parent, int idx);
+    static void rotateRight(BTreeNode* parent, int idx);
 
     std::string toString();
     std::string toStringReversed();

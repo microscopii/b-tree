@@ -11,14 +11,12 @@
 
 class BTreeNode;
 
-class BTree {
-
+class BTree
+{
 public:
     static const int MAX_DEPTH = 10;
-    static const int MIN_LEAF_DEGREE = 4;
-    static const int MAX_LEAF_KEYS = (2 * MIN_LEAF_DEGREE);
-    static const int MIN_DEGREE = 2;
-    static const int MAX_KEYS = (2 * MIN_DEGREE) + 1;
+    static const int MIN_DEGREE = 3;
+    static const int MAX_KEYS = (2 * MIN_DEGREE) - 1;
 
 private:
     int depth;
@@ -29,12 +27,15 @@ public:
     BTree();
     ~BTree();
 
+    BTreeNode* findLeaf(int key);
     BTreeNode* findLeafWithFirstKey(BTreeNode* node);
     BTreeNode* findLeafWithLastKey(BTreeNode* node);
-    BTreeNode* findLeaf(int key);
+
+    int getPredecessor(BTreeNode* node);
+    int getSuccessor(BTreeNode* node);
 
     void insertKey(int key);
-    bool deleteKey(int key);
+    void deleteKey(int key);
 
     void dump();
     void dumpLeafNodesAsc();
@@ -44,6 +45,10 @@ private:
     BTreeNode* createRootLeafNode();
     BTreeNode* createRootNode();
     void insertNonFull(BTreeNode* node, int key);
+    void deleteKey(BTreeNode* node, int key);
+    void deleteFromNonLeaf(BTreeNode* node, int idx);
+    void deleteFromLeaf(BTreeNode* node, int idx);
+    void rebalance(BTreeNode* node, int idx);
     void dump(BTreeNode* node, int level);
     void dumpLeaf(BTreeNode* node, int level);
     void indent(int n);
